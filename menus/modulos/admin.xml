@@ -8,6 +8,7 @@
 	<menu id="menuDFC" imageMso="AppointmentColorDialog" label="Demonstração do Fluxo de Caixa">
 		<menu id="submenuDFC-Cadastros" imageMso="AppointmentColorDialog" label="Cadastros">
 			<button id="btnDFC-Cadastros-Lojas" imageMso="AppointmentColorDialog" label="Lojas" onAction="naAcaoBotao"/>
+			<button id="btnDFC-Cadastros-Contas" imageMso="AppointmentColorDialog" label="Contas" onAction="naAcaoBotao"/>
 		</menu>
 	</menu>		
 	<!--

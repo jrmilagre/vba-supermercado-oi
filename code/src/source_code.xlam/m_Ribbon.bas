@@ -13,6 +13,7 @@ Public Sub naAcaoBotao(control As IRibbonControl)
         Select Case control.ID
         
             Case "btnDFC-Cadastros-Lojas": f_dfc_Lojas.Show
+            Case "btnDFC-Cadastros-Contas": f_dfc_contas.Show
     
             Case Else: MsgBox "Botão ainda não implementado", vbInformation
             

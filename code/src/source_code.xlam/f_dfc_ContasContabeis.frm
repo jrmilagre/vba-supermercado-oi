@@ -1,14 +1,14 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} f_dfc_Contas 
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} f_dfc_ContasContabeis 
    Caption         =   ":: Cadastro de Contas ::"
    ClientHeight    =   9015
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   11655
-   OleObjectBlob   =   "f_dfc_contas.frx":0000
+   OleObjectBlob   =   "f_dfc_ContasContabeis.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
-Attribute VB_Name = "f_dfc_contas"
+Attribute VB_Name = "f_dfc_ContasContabeis"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
@@ -16,8 +16,8 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private oConta              As New cConta
-Private colControles        As New Collection       ' Para eventos de campos
+Private oContaContabil      As New c_dfc_ContaContabil
+Private colControles        As New Collection           ' Para atribuir eventos aos campos
 Private myRst               As New ADODB.Recordset
 Private bAtualizaScrool     As Boolean
 
@@ -32,7 +32,7 @@ Private Sub UserForm_Initialize()
 End Sub
 Private Sub UserForm_Terminate()
     
-    Set oConta = Nothing
+    Set oContaContabil = Nothing
     Set myRst = Nothing
     
     Call Desconecta
@@ -120,7 +120,7 @@ Private Sub lstPrincipal_Change()
         btnAlterar.Enabled = True
         btnExcluir.Enabled = True
     
-        With oConta
+        With oContaContabil
     
             .CRUD eCrud.Read, (CLng(lstPrincipal.List(lstPrincipal.ListIndex, 1)))
     
@@ -217,7 +217,7 @@ Private Sub lstPrincipalPopular(Pagina As Long)
             .List(.ListCount - 1, 0) = myRst.Fields("conta").Value
             .List(.ListCount - 1, 1) = myRst.Fields("id").Value
             .List(.ListCount - 1, 2) = myRst.Fields("subgrupo").Value
-            .List(.ListCount - 1, 3) = oConta.GetGrupoDFC(myRst.Fields("dfc_id").Value)
+            .List(.ListCount - 1, 3) = oContaContabil.GetGrupoDFC(myRst.Fields("dfc_id").Value)
             
             'If IsNull(myRst.Fields("nascimento").Value) Then vNascimento = "--/--/----" Else vNascimento = myRst.Fields("nascimento").Value
             'If IsNull(myRst.Fields("salario").Value) Then vSalario = 0 Else vSalario = myRst.Fields("salario").Value
@@ -283,7 +283,7 @@ Private Sub Gravar(Decisao As String)
                         
                         optButton = True
                         
-                        oConta.DfcID = oControl.Tag
+                        oContaContabil.DfcID = oControl.Tag
                         
                         Exit For
                         
@@ -297,7 +297,7 @@ Private Sub Gravar(Decisao As String)
                     
                 Else
                 
-                    With oConta
+                    With oContaContabil
                     
                         .Conta = txbConta.Text
                         .Subgrupo = txbSubgrupo.Text
@@ -320,7 +320,7 @@ Private Sub Gravar(Decisao As String)
         
         Else ' Se for exclusão
         
-            oConta.CRUD eCrud.Delete, oConta.ID
+            oContaContabil.CRUD eCrud.Delete, oContaContabil.ID
                 
             MsgBox Decisao & " realizada com sucesso.", vbInformation, Decisao & " de registro"
             
@@ -389,7 +389,7 @@ Private Sub BuscaRegistros(Optional Ordem As String)
     Dim n As Byte
     Dim o As control
 
-    Set myRst = oConta.Todos(Ordem)
+    Set myRst = oContaContabil.Todos(Ordem)
     
     If myRst.PageCount > 0 Then
         

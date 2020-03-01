@@ -2,39 +2,43 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "cConta"
+Attribute VB_Name = "c_teste_Contato"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
+Attribute VB_Exposed = True
 Option Explicit
 
 ' Classe
 
 Private Type TClass
     ID         As Long
-    Conta      As String
-    Subgrupo   As String
-    DfcID      As Integer
+    Nome       As String
+    Nascimento As Variant   ' Date
+    Salario    As Variant   ' Currency
+    Sexo       As Variant   ' String
 End Type
 
 Private This As TClass
 
-Private Const sTabela As String = "tbl_dfc_contas"
+Private Const sTabela As String = "tbl_contatos"
 
 ' Propriedades
 
 Public Property Get ID() As Long: ID = This.ID: End Property
 Public Property Let ID(ByVal Value As Long): This.ID = CLng(Value): End Property
 
-Public Property Get Conta() As String: Conta = This.Conta: End Property
-Public Property Let Conta(ByVal Value As String): This.Conta = Value: End Property
+Public Property Get Nome() As String: Nome = This.Nome: End Property
+Public Property Let Nome(ByVal Value As String): This.Nome = Value: End Property
 
-Public Property Get Subgrupo() As String: Subgrupo = This.Subgrupo: End Property
-Public Property Let Subgrupo(ByVal Value As String): This.Subgrupo = Value: End Property
+Public Property Get Nascimento() As Variant: Nascimento = This.Nascimento: End Property
+Public Property Let Nascimento(ByVal Value As Variant): This.Nascimento = Value: End Property
 
-Public Property Get DfcID() As Integer: DfcID = This.DfcID: End Property
-Public Property Let DfcID(ByVal Value As Integer): This.DfcID = Value: End Property
+Public Property Get Salario() As Variant: Salario = This.Salario: End Property
+Public Property Let Salario(ByVal Value As Variant): This.Salario = Value: End Property
+
+Public Property Get Sexo() As Variant: Sexo = This.Sexo: End Property
+Public Property Let Sexo(ByVal Value As Variant): This.Sexo = Value: End Property
 
 ' Métodos
 
@@ -55,9 +59,10 @@ Public Sub CRUD(Acao As Integer, Optional ID As Long)
             .Open sSQL, cnn, adOpenStatic, adLockReadOnly
         
             Me.ID = .Fields("id").Value
-            Me.Conta = .Fields("conta").Value
-            Me.Subgrupo = .Fields("subgrupo").Value
-            Me.DfcID = .Fields("dfc_id").Value
+            Me.Nome = .Fields("nome").Value
+            If IsNull(.Fields("nascimento").Value) Then: Me.Nascimento = "": Else: Me.Nascimento = .Fields("nascimento").Value
+            If IsNull(.Fields("salario").Value) Then: Me.Salario = 0: Else: Me.Salario = .Fields("salario").Value
+            If IsNull(.Fields("sexo").Value) Then: Me.Sexo = Null: Else: Me.Sexo = .Fields("sexo").Value
             
         End With
         
@@ -79,9 +84,10 @@ Public Sub CRUD(Acao As Integer, Optional ID As Long)
                 
             End If
             
-            .Fields("conta").Value = Me.Conta
-            .Fields("subgrupo").Value = Me.Subgrupo
-            .Fields("dfc_id").Value = Me.DfcID
+            .Fields("nome").Value = Me.Nome
+            .Fields("nascimento").Value = Me.Nascimento
+            .Fields("salario").Value = Me.Salario
+            .Fields("sexo").Value = Me.Sexo
             
             .Update
             
@@ -105,8 +111,11 @@ End Sub
 Public Function Todos(Optional Ordem As String) As ADODB.Recordset
 
     sSQL = "SELECT * "
-    sSQL = sSQL & "FROM " & sTabela & " "
+    sSQL = sSQL & "FROM tbl_contatos "
     
+'    sSQL = "SELECT nome, id, nascimento, salario "
+'    sSQL = sSQL & "FROM tbl_contatos "
+'    sSQL = sSQL & "WHERE nome LIKE ('%" & txbPesquisa.Text & "%') "
     If Ordem <> "" Then
         sSQL = sSQL & "ORDER BY " & Ordem
     End If
@@ -122,17 +131,3 @@ Public Function Todos(Optional Ordem As String) As ADODB.Recordset
     End With
     
 End Function
-Public Function GetGrupoDFC(ID As Integer) As String
-
-    Dim r As New ADODB.Recordset
-
-    sSQL = "SELECT grupo FROM tbl_dfc_mascara WHERE id = " & ID
-    
-    Set r = cnn.Execute(sSQL)
-    
-    GetGrupoDFC = r.Fields("grupo").Value
-    
-    Set r = Nothing
-
-End Function
-

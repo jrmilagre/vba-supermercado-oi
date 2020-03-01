@@ -1,22 +1,23 @@
 VERSION 5.00
-Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} fLojas 
-   Caption         =   ":: Cadastro de Contatos ::"
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} f_dfc_ContasCorrentes 
+   Caption         =   ":: Cadastro de Contas correntes ::"
    ClientHeight    =   9015
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   9960
-   OleObjectBlob   =   "fLojas.frx":0000
+   OleObjectBlob   =   "f_dfc_ContasCorrentes.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
-Attribute VB_Name = "fLojas"
+Attribute VB_Name = "f_dfc_ContasCorrentes"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
-Private oContato            As New cContato
-Private colControles        As New Collection       ' Para eventos de campos
+Private oContaCorrente      As New c_dfc_ContaCorrente
+Private colControles        As New Collection           ' Para atribuir eventos aos campos
 Private myRst               As New ADODB.Recordset
 Private bAtualizaScrool     As Boolean
 
@@ -31,19 +32,15 @@ Private Sub UserForm_Initialize()
 End Sub
 Private Sub UserForm_Terminate()
     
-    Set oContato = Nothing
+    Set oContaCorrente = Nothing
     Set myRst = Nothing
     
     Call Desconecta
     
 End Sub
-Private Sub btnSalario_Click()
-    ccurVisor = IIf(txbSalario.Text = "", 0, CCur(txbSalario.Text))
-    txbSalario.Text = Format(GetCalculadora, "#,##0.00")
-End Sub
-Private Sub btnNascimento_Click()
-    dtDate = IIf(txbNascimento.Text = Empty, Date, txbNascimento.Text)
-    txbNascimento.Text = GetCalendario
+Private Sub btnSaldoInicial_Click()
+    ccurVisor = IIf(txbSaldoInicial.Text = "", 0, CCur(txbSaldoInicial.Text))
+    txbSaldoInicial.Text = Format(GetCalculadora, "#,##0.00")
 End Sub
 Private Sub btnIncluir_Click()
     
@@ -80,7 +77,7 @@ Private Sub PosDecisaoTomada(Decisao As String)
         
         Call Campos("Habilitar")
         
-        txbNome.SetFocus
+        txbConta.SetFocus
         
     End If
     
@@ -118,23 +115,14 @@ Private Sub lstPrincipal_Change()
         btnAlterar.Enabled = True
         btnExcluir.Enabled = True
     
-        With oContato
+        With oContaCorrente
     
             .CRUD eCrud.Read, (CLng(lstPrincipal.List(lstPrincipal.ListIndex, 1)))
     
             lblCabID.Caption = IIf(.ID = 0, "", Format(.ID, "000000"))
-            lblCabNome.Caption = .Nome
-            txbNome.Text = .Nome
-            txbNascimento.Text = IIf(IsNull(.Nascimento), "", .Nascimento)
-            txbSalario.Text = Format(.Salario, "#,##0.00")
-            
-            If Not IsNull(.Sexo) Then
-                For n = 0 To cbbSexo.ListCount
-                    If cbbSexo.List(n, 1) = .Sexo Then: cbbSexo.ListIndex = n: Exit For
-                Next n
-            Else
-                cbbSexo.ListIndex = -1
-            End If
+            lblCabConta.Caption = .Conta
+            txbConta.Text = .Conta
+            txbSaldoInicial.Text = Format(.SaldoInicial, "#,##0.00")
             
         End With
         
@@ -158,29 +146,24 @@ Private Sub Campos(Acao As String)
         
         MultiPage1.Pages(0).Enabled = Not b
         
-        txbNome.Enabled = b: lblNome.Enabled = b
-        txbNascimento.Enabled = b: lblNascimento.Enabled = b: btnNascimento.Enabled = b
-        txbSalario.Enabled = b: lblSalario.Enabled = b: btnSalario.Enabled = b
-        cbbSexo.Enabled = b: lblSexo.Enabled = b
+        txbConta.Enabled = b: lblConta.Enabled = b
+        txbSaldoInicial.Enabled = b: lblSaldoInicial.Enabled = b: btnSaldoInicial.Enabled = b
         
     Else
     
         lblCabID.Caption = ""
-        lblCabNome.Caption = ""
-        txbNome.Text = Empty
-        txbNascimento.Text = IIf(sDecisao = "Inclusão", Date, Empty)
-        txbSalario.Text = IIf(sDecisao = "Inclusão", Format(0, "#,##0.00"), "")
-        cbbSexo.ListIndex = -1
+        lblCabConta.Caption = ""
+        txbConta.Text = Empty
+        txbSaldoInicial.Text = IIf(sDecisao = "Inclusão", Format(0, "#,##0.00"), "")
              
     End If
 
 End Sub
 Private Sub lstPrincipalPopular(Pagina As Long)
 
-    Dim n           As Byte
-    Dim vNascimento As Variant
-    Dim vSalario    As Variant
-    Dim oLegenda     As control
+    Dim n               As Byte
+    Dim oLegenda        As control
+    Dim cSaldoInicial   As Currency
     
     ' Limpa cores da legenda
     For n = 1 To myRst.PageSize
@@ -192,8 +175,8 @@ Private Sub lstPrincipalPopular(Pagina As Long)
     
     With lstPrincipal
         .Clear                                      ' Limpa conteúdo
-        .ColumnCount = 4                            ' Define número de colunas
-        .ColumnWidths = "180 pt; 0pt; 55pt; 60pt;"  ' Configura largura das colunas
+        .ColumnCount = 3                            ' Define número de colunas
+        .ColumnWidths = "180 pt; 0pt; 60pt;"        ' Configura largura das colunas
         .Font = "Consolas"                          ' Configura fonte
         
         n = 1
@@ -203,24 +186,20 @@ Private Sub lstPrincipalPopular(Pagina As Long)
             ' Preenche ListBox
             .AddItem
             
-            .List(.ListCount - 1, 0) = myRst.Fields("nome").Value
+            .List(.ListCount - 1, 0) = myRst.Fields("conta").Value
             .List(.ListCount - 1, 1) = myRst.Fields("id").Value
             
-            If IsNull(myRst.Fields("nascimento").Value) Then vNascimento = "--/--/----" Else vNascimento = myRst.Fields("nascimento").Value
-            If IsNull(myRst.Fields("salario").Value) Then vSalario = 0 Else vSalario = myRst.Fields("salario").Value
+            cSaldoInicial = myRst.Fields("saldo_inicial").Value
             
-            .List(.ListCount - 1, 2) = vNascimento
-            .List(.ListCount - 1, 3) = Space(12 - Len(Format(vSalario, "#,##0.00"))) & Format(vSalario, "#,##0.00")
+            .List(.ListCount - 1, 2) = Space(15 - Len(Format(cSaldoInicial, "#,##0.00"))) & Format(cSaldoInicial, "#,##0.00")
             
             ' Colore a legenda
             Set oLegenda = Controls("l" & Format(n, "00"))
             
-            If myRst.Fields("sexo").Value = "F" Then
-                oLegenda.BackColor = &HFF80FF
-            ElseIf myRst.Fields("sexo").Value = "M" Then
-                oLegenda.BackColor = &HFF8080
+            If myRst.Fields("saldo_inicial").Value < 0 Then
+                oLegenda.BackColor = &HC0&
             Else
-                oLegenda.BackColor = &H8000000F
+                oLegenda.BackColor = &HC00000
             End If
             
             ' Próximo registro
@@ -251,16 +230,16 @@ Private Sub Gravar(Decisao As String)
     
         If Decisao <> "Exclusão" Then
         
-            If txbNome.Text = Empty Then
-                MsgBox "Campo 'Nome' é obrigatório", vbCritical: MultiPage1.Value = 1: txbNome.SetFocus
+            If txbConta.Text = Empty Then
+                MsgBox "Campo 'Conta' é obrigatório", vbCritical: MultiPage1.Value = 1: txbConta.SetFocus
+            ElseIf txbSaldoInicial = Empty Then
+                MsgBox "Campo 'Saldo inicial' é obrigatório", vbCritical: MultiPage1.Value = 1: txbSaldoInicial.SetFocus
             Else
                 
-                With oContato
+                With oContaCorrente
                     
-                    .Nome = txbNome.Text
-                    If RTrim(txbNascimento.Text) = "" Then .Nascimento = Null Else .Nascimento = CDate(txbNascimento.Text)
-                    If RTrim(txbSalario.Text) = "" Then .Salario = Null Else .Salario = CCur(txbSalario.Text)
-                    If cbbSexo.ListIndex = -1 Then .Sexo = Null Else .Sexo = cbbSexo.List(cbbSexo.ListIndex, 1)
+                    .Conta = txbConta.Text
+                    .SaldoInicial = CCur(txbSaldoInicial.Text)
                     
                     If Decisao = "Inclusão" Then
                         .CRUD eCrud.Create
@@ -278,7 +257,7 @@ Private Sub Gravar(Decisao As String)
         
         Else ' Se for exclusão
         
-            oContato.CRUD eCrud.Delete, oContato.ID
+            oContaCorrente.CRUD eCrud.Delete, oContaCorrente.ID
                 
             MsgBox Decisao & " realizada com sucesso.", vbInformation, Decisao & " de registro"
             
@@ -347,7 +326,7 @@ Private Sub BuscaRegistros(Optional Ordem As String)
     Dim n As Byte
     Dim o As control
 
-    Set myRst = oContato.Todos(Ordem)
+    Set myRst = oContaCorrente.Todos(Ordem)
     
     If myRst.PageCount > 0 Then
         
@@ -371,7 +350,6 @@ Private Sub BuscaRegistros(Optional Ordem As String)
     End If
     
     Call btnCancelar_Click
-    
 
 End Sub
 Private Sub TrataBotoesNavegacao()
@@ -486,19 +464,6 @@ Private Sub scrPagina_Change()
 End Sub
 Private Sub PopulaCombos()
 
-    With cbbSexo
-        .Clear
-        .ColumnCount = 2
-        .ColumnWidths = "60pt; 0pt;"
-        
-        .AddItem
-        .List(.ListCount - 1, 0) = "MASCULINO"
-        .List(.ListCount - 1, 1) = "M"
-        
-        .AddItem
-        .List(.ListCount - 1, 0) = "FEMININO"
-        .List(.ListCount - 1, 1) = "F"
-    End With
 
 End Sub
 Private Sub lstPrincipal_DblClick(ByVal Cancel As MSForms.ReturnBoolean)

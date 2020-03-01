@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "cLoja"
+Attribute VB_Name = "c_dfc_ContaCorrente"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -12,21 +12,26 @@ Option Explicit
 ' Classe
 
 Private Type TClass
-    ID         As Long
-    Loja       As String
+    ID              As Long
+    Conta           As String
+    SaldoInicial    As String
 End Type
 
 Private This As TClass
 
-Private Const sTabela As String = "tbl_dfc_lojas"
+Private Const sTabela As String = "tbl_dfc_contas_correntes"
 
 ' Propriedades
 
 Public Property Get ID() As Long: ID = This.ID: End Property
 Public Property Let ID(ByVal Value As Long): This.ID = CLng(Value): End Property
 
-Public Property Get Loja() As String: Loja = This.Loja: End Property
-Public Property Let Loja(ByVal Value As String): This.Loja = Value: End Property
+Public Property Get Conta() As String: Conta = This.Conta: End Property
+Public Property Let Conta(ByVal Value As String): This.Conta = Value: End Property
+
+Public Property Get SaldoInicial() As Currency: SaldoInicial = This.SaldoInicial: End Property
+Public Property Let SaldoInicial(ByVal Value As Currency): This.SaldoInicial = Value: End Property
+
 
 ' Métodos
 
@@ -47,7 +52,8 @@ Public Sub CRUD(Acao As Integer, Optional ID As Long)
             .Open sSQL, cnn, adOpenStatic, adLockReadOnly
         
             Me.ID = .Fields("id").Value
-            Me.Loja = .Fields("loja").Value
+            Me.Conta = .Fields("conta").Value
+            Me.SaldoInicial = .Fields("saldo_inicial").Value
             
         End With
         
@@ -69,7 +75,8 @@ Public Sub CRUD(Acao As Integer, Optional ID As Long)
                 
             End If
             
-            .Fields("loja").Value = Me.Loja
+            .Fields("conta").Value = Me.Conta
+            .Fields("saldo_inicial").Value = Me.SaldoInicial
             
             .Update
             
@@ -110,4 +117,3 @@ Public Function Todos(Optional Ordem As String) As ADODB.Recordset
     End With
     
 End Function
-

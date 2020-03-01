@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private oLoja               As New cLoja
+Private oLoja               As New c_dfc_Loja
 Private colControles        As New Collection       ' Para eventos de campos
 Private myRst               As New ADODB.Recordset
 Private bAtualizaScrool     As Boolean

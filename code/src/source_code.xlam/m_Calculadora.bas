@@ -3,14 +3,14 @@ Option Private Module
 Option Explicit
 
 Public ccurVisor            As Currency
-Dim aBotoes()               As New c_Calculadora  ' Vetor que armazena todos os botões de dia do Calendário
+Dim aBotoes()               As New c__Calculadora  ' Vetor que armazena todos os botões de dia do Calendário
 
 Public Function GetCalculadora() As Double
     
     ' Declara variáveis
     Dim lTotalBotoes As Long   ' Total de rótulos
     Dim Ctrl As control
-    Dim frm As New f_Calculadora      ' Formulário
+    Dim frm As New f__Calculadora      ' Formulário
     
     ' Atribui cada um dos botões em um elemento do vetor da classe
     For Each Ctrl In frm.Controls

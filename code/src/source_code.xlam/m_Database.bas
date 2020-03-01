@@ -21,7 +21,7 @@ Public cat  As ADOX.Catalog
 Public sSQL As String
 Public Function Conecta() As Boolean
 
-    Dim oConfig As New c_Config
+    Dim oConfig As New c__Config
     
     ' Cria objeto de conexão com o banco de dados
     Set cnn = New ADODB.Connection

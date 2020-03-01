@@ -6,11 +6,12 @@
 	</menu>
 	
 	<menu id="menuDFC" imageMso="AppointmentColorDialog" label="Demonstração do Fluxo de Caixa">
-		<menu id="submenuDFC-Cadastros" imageMso="AppointmentColorDialog" label="Cadastros">
-			<button id="btnDFC-Cadastros-Lojas" imageMso="AppointmentColorDialog" label="Lojas" onAction="naAcaoBotao"/>
-			<button id="btnDFC-Cadastros-ContasContabeis" imageMso="AppointmentColorDialog" label="Contas contábeis" onAction="naAcaoBotao"/>
-			<button id="btnDFC-Cadastros-ContasCorrentes" imageMso="AppointmentColorDialog" label="Contas correntes" onAction="naAcaoBotao"/>
-		</menu>
+		<!--<menu id="submenuDFC-Cadastros" imageMso="AppointmentColorDialog" label="Cadastros">-->
+			<button id="btnDFC-Cadastros-Lojas" imageMso="AppointmentColorDialog" label="Cadastro de Lojas" onAction="naAcaoBotao"/>
+			<button id="btnDFC-Cadastros-ContasContabeis" imageMso="AppointmentColorDialog" label="Cadastro de Contas contábeis" onAction="naAcaoBotao"/>
+			<button id="btnDFC-Cadastros-ContasCorrentes" imageMso="AppointmentColorDialog" label="Cadastro de Contas correntes" onAction="naAcaoBotao"/>
+			<button id="btnDFC-Cadastros-Lancamentos" imageMso="AppointmentColorDialog" label="Lançamentos" onAction="naAcaoBotao"/>
+		<!--</menu>-->
 	</menu>		
 	<!--
 	<gallery 

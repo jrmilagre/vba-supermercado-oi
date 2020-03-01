@@ -4,7 +4,7 @@ Option Explicit
 
 Public Const sMascaraData   As String = "DD/MM/YYYY"   ' Máscara de formatação de datas
 Public dtDate               As Date
-Dim aBotoes()               As New c_Calendario  ' Vetor que armazena todos os botões de dia do Calendário
+Dim aBotoes()               As New c__Calendario  ' Vetor que armazena todos os botões de dia do Calendário
 
 Public Function GetCalendario() As Date
     ' Função GetCalendario
@@ -12,7 +12,7 @@ Public Function GetCalendario() As Date
     ' Declara variáveis
     Dim lTotalBotoes As Long   ' Total de rótulos
     Dim Ctrl As control
-    Dim frm As New f_Calendario      ' Formulário
+    Dim frm As New f__Calendario      ' Formulário
     
     'Set frm = New fCalendario ' Cria novo objeto setando formulário nele
     

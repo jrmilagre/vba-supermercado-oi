@@ -15,6 +15,7 @@ Public Sub naAcaoBotao(control As IRibbonControl)
             Case "btnDFC-Cadastros-Lojas": f_dfc_Lojas.Show
             Case "btnDFC-Cadastros-ContasContabeis": f_dfc_ContasContabeis.Show
             Case "btnDFC-Cadastros-ContasCorrentes": f_dfc_ContasCorrentes.Show
+            Case "btnDFC-Cadastros-Lancamentos": f_dfc_Lancamentos.Show
     
             Case Else: MsgBox "Botão ainda não implementado", vbInformation
             

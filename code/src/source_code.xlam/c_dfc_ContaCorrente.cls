@@ -97,7 +97,7 @@ Public Sub CRUD(Acao As Integer, Optional ID As Long)
     Set rst = Nothing
 
 End Sub
-Public Function Todos(Optional Ordem As String) As ADODB.Recordset
+Public Function Todos(Optional Ordem As String, Optional ListBoxPrincipal As Boolean) As ADODB.Recordset
 
     sSQL = "SELECT * "
     sSQL = sSQL & "FROM " & sTabela & " "
@@ -112,7 +112,7 @@ Public Function Todos(Optional Ordem As String) As ADODB.Recordset
         .CursorLocation = adUseServer
         .CursorType = adOpenStatic
         .LockType = adLockReadOnly
-        .PageSize = 24
+        If ListBoxPrincipal = True Then .PageSize = 24
         .Open sSQL, cnn
     End With
     

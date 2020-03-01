@@ -280,7 +280,7 @@ Private Sub EventosCampos()
 
     ' Declara variáveis
     Dim oControle   As MSForms.control
-    Dim oEvento     As c_EventoCampo
+    Dim oEvento     As c__EventoCampo
     Dim sTag        As String
     Dim sField()    As String
     
@@ -292,7 +292,7 @@ Private Sub EventosCampos()
         
             If TypeName(oControle) = "TextBox" Then
             
-                Set oEvento = New c_EventoCampo
+                Set oEvento = New c__EventoCampo
                 
                 With oEvento
                 
@@ -326,7 +326,7 @@ Private Sub BuscaRegistros(Optional Ordem As String)
     Dim n As Byte
     Dim o As control
 
-    Set myRst = oContaCorrente.Todos(Ordem)
+    Set myRst = oContaCorrente.Todos(Ordem, True)
     
     If myRst.PageCount > 0 Then
         

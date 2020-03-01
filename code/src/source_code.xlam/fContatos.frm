@@ -301,7 +301,7 @@ Private Sub EventosCampos()
 
     ' Declara variáveis
     Dim oControle   As MSForms.control
-    Dim oEvento     As c_EventoCampo
+    Dim oEvento     As c__EventoCampo
     Dim sTag        As String
     Dim sField()    As String
     
@@ -313,7 +313,7 @@ Private Sub EventosCampos()
         
             If TypeName(oControle) = "TextBox" Then
             
-                Set oEvento = New c_EventoCampo
+                Set oEvento = New c__EventoCampo
                 
                 With oEvento
                 
